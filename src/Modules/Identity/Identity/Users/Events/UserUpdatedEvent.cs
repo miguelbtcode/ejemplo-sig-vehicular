@@ -2,4 +2,4 @@ using Shared.Contracts.DDD;
 
 namespace Identity.Users.Events;
 
-public record UserUpdatedEvent(User User) : IDomainEvent;
+public record UserUpdatedEvent(User User, List<Guid> NewRoleIds) : IDomainEvent;

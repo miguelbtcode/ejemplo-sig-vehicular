@@ -33,7 +33,16 @@ public static class IdentityModule
             (sp, options) =>
             {
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(
+                    connectionString,
+                    npgsqlOptions =>
+                    {
+                        npgsqlOptions.MigrationsAssembly(
+                            typeof(IdentityDbContext).Assembly.FullName
+                        );
+                        npgsqlOptions.EnableRetryOnFailure(maxRetryCount: 3);
+                    }
+                );
             }
         );
 

@@ -49,13 +49,11 @@ public class IdentityDataSeeder(IdentityDbContext dbContext) : IDataSeeder
                 BCrypt.Net.BCrypt.HashPassword("Admin123!")
             );
 
-            dbContext.Users.Add(adminUser);
-            await dbContext.SaveChangesAsync();
-
             // Asignar rol de administrador
             var adminRole = await dbContext.Roles.FirstAsync(r => r.Name == "Administrador");
             adminUser.AssignRole(adminRole.Id);
 
+            dbContext.Users.Add(adminUser);
             await dbContext.SaveChangesAsync();
         }
     }

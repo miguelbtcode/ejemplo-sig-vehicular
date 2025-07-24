@@ -16,6 +16,7 @@ public static class CqrsExtensions
         // Registrar dispatchers
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
         services.AddScoped<IQueryDispatcher, QueryDispatcher>();
+        services.AddScoped<ISender, Sender>();
 
         services.Scan(scan =>
             scan.FromAssemblies(assemblies)

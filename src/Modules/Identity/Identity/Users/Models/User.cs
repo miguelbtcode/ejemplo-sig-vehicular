@@ -10,6 +10,8 @@ public class User : Aggregate<Guid>
     private readonly List<UserRole> _userRoles = [];
     public IReadOnlyList<UserRole> UserRoles => _userRoles.AsReadOnly();
 
+    private User() { }
+
     public static User Create(string name, string email, string hashedPassword)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
@@ -29,15 +31,16 @@ public class User : Aggregate<Guid>
         return user;
     }
 
-    public void UpdateProfile(string name, string email)
+    public void UpdateUserInformation(string name, string email, List<Guid> roleIds)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        ArgumentNullException.ThrowIfNull(roleIds);
 
         Name = name;
         Email = email.ToLower();
 
-        AddDomainEvent(new UserUpdatedEvent(this));
+        AddDomainEvent(new UserUpdatedEvent(this, roleIds));
     }
 
     public void ChangePassword(string newHashedPassword)
