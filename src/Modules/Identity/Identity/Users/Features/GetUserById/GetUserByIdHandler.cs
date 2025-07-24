@@ -1,4 +1,3 @@
-using Identity.Errors;
 using Identity.Users.Dtos;
 
 namespace Identity.Users.Features.GetUserById;

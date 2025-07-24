@@ -1,31 +1,18 @@
 using Identity.Authorization.Requirements;
-using Identity.Permissions.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Identity.Authorization.Handlers;
 
-public class PermissionAuthorizationHandler(IPermissionService permissionService)
-    : AuthorizationHandler<PermissionRequirement>
+public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
-    protected override async Task HandleRequirementAsync(
+    protected override Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         PermissionRequirement requirement
     )
     {
-        var userIdClaim = context.User.FindFirst("user_id");
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-        {
-            context.Fail();
-            return;
-        }
+        var requiredPermission = $"{requirement.Module}:{requirement.Permission}";
 
-        var hasPermission = await permissionService.UserHasPermissionAsync(
-            userId,
-            requirement.Module,
-            requirement.Permission
-        );
-
-        if (hasPermission)
+        if (context.User.HasClaim("permission", requiredPermission))
         {
             context.Succeed(requirement);
         }
@@ -33,5 +20,7 @@ public class PermissionAuthorizationHandler(IPermissionService permissionService
         {
             context.Fail();
         }
+
+        return Task.CompletedTask;
     }
 }

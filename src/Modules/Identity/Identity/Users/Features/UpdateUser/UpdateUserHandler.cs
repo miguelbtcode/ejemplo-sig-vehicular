@@ -1,4 +1,3 @@
-using Identity.Errors;
 using Identity.Users.Dtos;
 using Shared.Exceptions;
 
@@ -83,7 +82,7 @@ internal class UpdateUserHandler(IdentityDbContext dbContext)
             await dbContext.SaveChangesAsync(cancellationToken);
             return new UpdateUserResult(true);
         }
-        catch (DbUpdateConcurrencyException ex)
+        catch (DbUpdateConcurrencyException)
         {
             // Manejar específicamente errores de concurrencia
             throw new BusinessException(

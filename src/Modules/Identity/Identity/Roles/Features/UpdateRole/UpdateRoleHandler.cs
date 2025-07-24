@@ -1,15 +1,17 @@
 using Identity.Roles.Dtos;
 
-namespace Identity.Roles.Features.CreateRole;
+namespace Identity.Roles.Features.UpdateRole;
 
-public record CreateRoleCommand(CreateRoleDto Role) : ICommand<Result<CreateRoleResult>>;
+public record UpdateRoleCommand(Guid RoleId, UpdateRoleDto Role)
+    : ICommand<Result<UpdateRoleResult>>;
 
-public record CreateRoleResult(Guid Id);
+public record UpdateRoleResult(bool IsSuccess);
 
-public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
+public class UpdateRoleCommandValidator : AbstractValidator<UpdateRoleCommand>
 {
-    public CreateRoleCommandValidator()
+    public UpdateRoleCommandValidator()
     {
+        RuleFor(x => x.RoleId).NotEmpty().WithMessage("RoleId es requerido");
         RuleFor(x => x.Role.Name).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Role.Description).MaximumLength(255);
         RuleFor(x => x.Role.Permissions)
@@ -28,24 +30,33 @@ public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
     }
 }
 
-internal class CreateRoleHandler(IdentityDbContext dbContext)
-    : ICommandHandler<CreateRoleCommand, Result<CreateRoleResult>>
+internal class UpdateRoleHandler(IdentityDbContext dbContext)
+    : ICommandHandler<UpdateRoleCommand, Result<UpdateRoleResult>>
 {
-    public async Task<Result<CreateRoleResult>> HandleAsync(
-        CreateRoleCommand command,
+    public async Task<Result<UpdateRoleResult>> HandleAsync(
+        UpdateRoleCommand command,
         CancellationToken cancellationToken
     )
     {
-        // 1. Verify if the role already exists
-        var existingRole = await dbContext.Roles.FirstOrDefaultAsync(
-            r => r.Name.ToLower() == command.Role.Name.ToLower(),
+        // 1. Verificar que el rol existe
+        var role = await dbContext.Roles.FirstOrDefaultAsync(
+            r => r.Id == command.RoleId && r.Enabled,
             cancellationToken
         );
 
-        if (existingRole != null)
+        if (role == null)
+            return RoleErrors.NotFound(command.RoleId);
+
+        // 2. Verificar si el nombre ya existe en otro rol
+        var existingRoleWithName = await dbContext.Roles.FirstOrDefaultAsync(
+            r => r.Name.ToLower() == command.Role.Name.ToLower() && r.Id != command.RoleId,
+            cancellationToken
+        );
+
+        if (existingRoleWithName != null)
             return RoleErrors.NameAlreadyExists(command.Role.Name);
 
-        // 2. Verify each module exists and its enabled
+        // 3. Verificar que todos los módulos existen y están activos
         var moduleIds = command.Role.Permissions.Select(p => p.ModuleId).Distinct().ToList();
         var existingModules = await dbContext
             .Modules.Where(m => moduleIds.Contains(m.Id) && m.Enabled)
@@ -60,7 +71,7 @@ internal class CreateRoleHandler(IdentityDbContext dbContext)
             );
         }
 
-        // 3. Verify each permission type exists
+        // 4. Verificar que todos los tipos de permiso existen
         var permissionTypeIds = command
             .Role.Permissions.Select(p => p.PermissionTypeId)
             .Distinct()
@@ -78,21 +89,34 @@ internal class CreateRoleHandler(IdentityDbContext dbContext)
             );
         }
 
-        // 4. Create the role
-        var role = Role.Create(command.Role.Name, command.Role.Description);
+        // 5. Actualizar información básica del rol
+        role.Update(command.Role.Name, command.Role.Description);
 
-        // 5. Add permissions to the role
-        var permissions = command
+        // Eliminar todos los permisos existentes del rol
+        var existingPermissions = await dbContext
+            .Permissions.Where(p => p.IdRole == command.RoleId)
+            .ToListAsync(cancellationToken);
+
+        if (existingPermissions.Count != 0)
+        {
+            dbContext.Permissions.RemoveRange(existingPermissions);
+        }
+
+        // Crear los nuevos permisos
+        var newPermissions = command
             .Role.Permissions.Select(p =>
-                Permission.Create(role.Id, p.ModuleId, p.PermissionTypeId)
+                Permission.Create(command.RoleId, p.ModuleId, p.PermissionTypeId)
             )
             .ToList();
 
-        dbContext.Roles.Add(role);
-        dbContext.Permissions.AddRange(permissions);
+        if (newPermissions.Count != 0)
+        {
+            dbContext.Permissions.AddRange(newPermissions);
+        }
 
+        // Guardar todos los cambios
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return new CreateRoleResult(role.Id);
+        return new UpdateRoleResult(true);
     }
 }

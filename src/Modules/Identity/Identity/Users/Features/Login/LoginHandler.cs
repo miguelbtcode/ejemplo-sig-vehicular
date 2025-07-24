@@ -1,6 +1,5 @@
 using Identity.Authentication.Models;
 using Identity.Authentication.Services;
-using Identity.Errors;
 using Identity.Users.Dtos;
 
 namespace Identity.Users.Features.Login;
@@ -58,6 +57,7 @@ internal class LoginHandler(
         var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
         var permissions = user
             .UserRoles.SelectMany(ur => ur.Role.Permissions)
+            .Where(p => p.Module.Enabled)
             .Select(p => $"{p.Module.Name}:{p.PermissionType.Name}")
             .Distinct()
             .ToList();

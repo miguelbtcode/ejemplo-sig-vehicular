@@ -1,5 +1,4 @@
 using Identity.Authentication.Services;
-using Identity.Errors;
 
 namespace Identity.Users.Features.ChangePassword;
 

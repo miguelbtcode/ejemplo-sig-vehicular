@@ -1,5 +1,3 @@
-using Identity.Errors;
-
 namespace Identity.Users.Features.DeleteUser;
 
 public record DeleteUserCommand(Guid UserId) : ICommand<Result<DeleteUserResult>>;

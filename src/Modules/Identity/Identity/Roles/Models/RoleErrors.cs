@@ -1,8 +1,8 @@
-namespace Identity.Errors;
+namespace Identity.Roles.Models;
 
 public static class RoleErrors
 {
-    public static Error NotFound(int id) =>
+    public static Error NotFound(Guid id) =>
         new("Role.NotFound", $"Rol con ID '{id}' no fue encontrado");
 
     public static Error InvalidRoles =>

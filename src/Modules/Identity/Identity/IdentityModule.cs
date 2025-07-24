@@ -95,6 +95,10 @@ public static class IdentityModule
 
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
+        services
+            .AddAuthorizationBuilder()
+            .AddPolicy("AdminOnly", policy => policy.RequireRole("Administrador"));
+
         return services;
     }
 

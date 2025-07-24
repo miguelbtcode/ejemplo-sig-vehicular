@@ -1,4 +1,4 @@
-namespace Identity.Errors;
+namespace Identity.Users.Models;
 
 public static class UserErrors
 {
