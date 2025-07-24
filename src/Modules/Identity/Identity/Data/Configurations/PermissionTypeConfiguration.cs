@@ -10,7 +10,11 @@ public class PermissionTypeConfiguration : IEntityTypeConfiguration<PermissionTy
 
         builder.Property(e => e.Name).IsRequired().HasMaxLength(30).HasColumnName("nombre_permiso");
 
+        builder.Property(e => e.Code).IsRequired().HasMaxLength(20).HasColumnName("codigo");
+
         builder.Property(e => e.Description).HasMaxLength(255).HasColumnName("descripcion");
+
+        builder.HasIndex(e => e.Code).IsUnique();
 
         builder
             .HasMany(tp => tp.Permissions)

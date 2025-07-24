@@ -27,6 +27,7 @@ public class LoginEndpoint : ICarterModule
                     return Results.Ok(response);
                 }
             )
+            .WithTags("Authentication")
             .WithName("Login")
             .Produces<LoginResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)

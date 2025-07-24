@@ -1,3 +1,4 @@
+using Identity.Authorization.Extensions;
 using Identity.Roles.Dtos;
 
 namespace Identity.Roles.Features.UpdateRole;
@@ -21,12 +22,14 @@ public class UpdateRoleEndpoint : ICarterModule
                     return Results.Ok(response);
                 }
             )
+            .WithTags("Roles")
             .WithName("UpdateRole")
             .Produces<UpdateRoleResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status409Conflict)
             .WithSummary("Update Role")
-            .WithDescription("Update role information and permissions");
+            .WithDescription("Update role information and permissions")
+            .RequireAdmin();
     }
 }

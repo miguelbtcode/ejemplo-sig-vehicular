@@ -6,11 +6,11 @@ public static class InitialData
 {
     public static IEnumerable<PermissionType> TiposPermisos =>
         [
-            PermissionType.Create("Crear", "Permite crear nuevos registros"),
-            PermissionType.Create("Leer", "Permite visualizar registros"),
-            PermissionType.Create("Actualizar", "Permite modificar registros existentes"),
-            PermissionType.Create("Eliminar", "Permite eliminar registros"),
-            PermissionType.Create("Administrar", "Acceso completo al módulo"),
+            PermissionType.Create("Crear", "VIEW", "Permite crear nuevos registros"),
+            PermissionType.Create("Leer", "ADD", "Permite visualizar registros"),
+            PermissionType.Create("Actualizar", "EDIT", "Permite modificar registros existentes"),
+            PermissionType.Create("Eliminar", "REMOVE", "Permite eliminar registros"),
+            PermissionType.Create("Administrar", "ADMIN", "Acceso completo al módulo"),
         ];
 
     public static IEnumerable<Module> Modules =>

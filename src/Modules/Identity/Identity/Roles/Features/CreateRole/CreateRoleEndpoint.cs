@@ -1,3 +1,4 @@
+using Identity.Authorization.Extensions;
 using Identity.Roles.Dtos;
 
 namespace Identity.Roles.Features.CreateRole;
@@ -21,11 +22,13 @@ public class CreateRoleEndpoint : ICarterModule
                     return Results.Created($"/identity/roles/{response.Id}", response);
                 }
             )
+            .WithTags("Roles")
             .WithName("CreateRole")
             .Produces<CreateRoleResponse>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status409Conflict)
             .WithSummary("Create Role")
-            .WithDescription("Create a new role with specified permissions");
+            .WithDescription("Create a new role with specified permissions")
+            .RequireAdmin();
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Identity.Migrations
+namespace Identity.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -59,6 +59,7 @@ namespace Identity.Migrations
                 {
                     id_tipo_permiso = table.Column<Guid>(type: "uuid", nullable: false),
                     nombre_permiso = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    codigo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     descripcion = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
@@ -182,6 +183,13 @@ namespace Identity.Migrations
                 schema: "identity",
                 table: "permisos",
                 column: "id_tipo_permiso");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tipos_permisos_codigo",
+                schema: "identity",
+                table: "tipos_permisos",
+                column: "codigo",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_usuarios_email",

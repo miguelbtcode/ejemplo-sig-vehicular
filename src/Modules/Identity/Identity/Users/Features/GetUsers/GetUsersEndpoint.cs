@@ -19,6 +19,7 @@ public class GetUsersEndpoint : ICarterModule
                     return Results.Ok(response);
                 }
             )
+            .WithTags("Users")
             .WithName("GetUsers")
             .Produces<GetUsersResponse>(StatusCodes.Status200OK)
             .WithSummary("Get Users")

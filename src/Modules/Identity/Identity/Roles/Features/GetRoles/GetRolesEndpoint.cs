@@ -18,6 +18,7 @@ public class GetRolesEndpoint : ICarterModule
                     return Results.Ok(response);
                 }
             )
+            .WithTags("Roles")
             .WithName("GetRoles")
             .Produces<GetRolesResponse>(StatusCodes.Status200OK)
             .WithSummary("Get Roles")
