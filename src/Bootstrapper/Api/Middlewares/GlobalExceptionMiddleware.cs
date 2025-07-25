@@ -1,3 +1,4 @@
+using FluentValidation;
 using Shared.Exceptions;
 
 namespace Api.Middlewares;

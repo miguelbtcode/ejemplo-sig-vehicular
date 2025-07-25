@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Contracts.DDD;
 using Shared.DDD.Dispatchers;
 
-namespace Shared.DDD;
+namespace Shared.Extensions;
 
 public static class DddExtensions
 {

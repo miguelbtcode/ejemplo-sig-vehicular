@@ -1,5 +1,3 @@
-using Mapster;
-
 namespace Identity.Users.Features.DeleteUser;
 
 public record DeleteUserResponse(bool IsSuccess);

@@ -1,5 +1,4 @@
 using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 using Shared.Contracts.CQRS;
 
 namespace Shared.Decorators;
@@ -20,7 +19,7 @@ public class ValidationDecorator : ISender
         CancellationToken cancellationToken = default
     )
     {
-        await ValidateAsync(command);
+        await ValidateAsync(command, cancellationToken);
         return await _inner.SendAsync(command, cancellationToken);
     }
 
@@ -39,13 +38,31 @@ public class ValidationDecorator : ISender
         return await _inner.SendAsync(query, cancellationToken);
     }
 
-    private async Task ValidateAsync<T>(T request)
+    private async Task ValidateAsync<T>(T request, CancellationToken cancellationToken = default)
+        where T : class
     {
-        var validator = _serviceProvider.GetService<IValidator<T>>();
-        if (validator == null)
-            return;
+        Type commandType = request.GetType();
 
-        var validationResult = await validator.ValidateAsync(request);
+        Type validatorType = typeof(IValidator<>).MakeGenericType(commandType);
+
+        object? validator = _serviceProvider.GetService(validatorType);
+
+        if (validator is null)
+        {
+            return;
+        }
+
+        var validationContext = (IValidationContext)
+            Activator.CreateInstance(
+                typeof(ValidationContext<>).MakeGenericType(commandType),
+                request
+            )!;
+
+        var validationResult = await ((IValidator)validator).ValidateAsync(
+            validationContext,
+            cancellationToken
+        );
+
         if (!validationResult.IsValid)
         {
             throw new ValidationException(validationResult.Errors);

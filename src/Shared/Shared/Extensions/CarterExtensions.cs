@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Shared.Extensions;
 
-public static class CarterExtentions
+public static class CarterExtensions
 {
     public static IServiceCollection AddCarterWithAssemblies(
         this IServiceCollection services,

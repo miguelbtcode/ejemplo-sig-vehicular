@@ -1,10 +1,11 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Contracts.CQRS;
+using Shared.CQRS;
 using Shared.CQRS.Dispatchers;
 using Shared.Decorators;
 
-namespace Shared.CQRS;
+namespace Shared.Extensions;
 
 public static class CqrsExtensions
 {
@@ -50,10 +51,6 @@ public static class CqrsExtensions
 
         // Decorar Query Handlers
         services.Decorate(typeof(IQueryHandler<,>), typeof(LoggingQueryHandlerDecorator<,>));
-
-        // Decorate ISender to handle Result exceptions
-        services.Decorate<ISender, ValidationDecorator>();
-        services.Decorate<ISender, ResultExceptionDecorator>();
 
         // Si necesitas decorar Command Handlers sin response:
         // services.Decorate(typeof(ICommandHandler<>), typeof(LoggingCommandHandlerDecorator<>));

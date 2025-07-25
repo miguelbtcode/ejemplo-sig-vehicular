@@ -2,10 +2,9 @@ using Api.Middlewares;
 using Carter;
 using FluentValidation;
 using Identity;
+using Identity.Users.Features.CreateUser;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Shared.CQRS;
-using Shared.DDD;
 using Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,13 +16,12 @@ builder.Host.UseSerilog(
 var identityAssembly = typeof(IdentityModule).Assembly;
 
 builder.Services.AddCarterWithAssemblies(identityAssembly);
-
 builder.Services.AddCQRS(identityAssembly);
-
 builder.Services.AddDDD(identityAssembly);
 
-// Validaciones
-builder.Services.AddValidatorsFromAssembly(identityAssembly);
+builder.Services.AddScoped<IValidator<CreateUserCommand>, CreateUserCommandValidator>();
+
+builder.Services.AddValidationWithAssemblies(identityAssembly);
 
 // Autorización
 builder.Services.AddAuthorization();
@@ -31,6 +29,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityModule(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(static c =>
 {
     c.SwaggerDoc(

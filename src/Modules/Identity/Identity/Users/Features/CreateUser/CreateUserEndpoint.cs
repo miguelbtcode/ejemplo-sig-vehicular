@@ -1,5 +1,5 @@
+using Identity.Authorization.Extensions;
 using Identity.Users.Dtos;
-using Mapster;
 
 namespace Identity.Users.Features.CreateUser;
 
@@ -22,10 +22,12 @@ public class CreateUserEndpoint : ICarterModule
                     return Results.Created($"/identity/users/{response.Id}", response);
                 }
             )
+            .WithTags("Users")
             .WithName("CreateUser")
             .Produces<CreateUserResponse>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .WithSummary("Create User")
-            .WithDescription("Create a new user");
+            .WithDescription("Create a new user")
+            .RequireAdmin();
     }
 }

@@ -2,7 +2,6 @@ using System.Text;
 using Identity.Authentication.Middleware;
 using Identity.Authentication.Services;
 using Identity.Authorization.Handlers;
-using Identity.Authorization.Requirements;
 using Identity.Data.Seed;
 using Identity.Permissions.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -71,27 +70,6 @@ public static class IdentityModule
                     ClockSkew = TimeSpan.Zero,
                 };
             });
-
-        // Authorization
-        services.AddAuthorization(options =>
-        {
-            // Crear políticas dinámicamente para permisos
-            var modules = new[] { "Catalog", "Basket", "Ordering", "Identity" };
-            var permissions = new[] { "Crear", "Leer", "Actualizar", "Eliminar", "Administrar" };
-
-            foreach (var module in modules)
-            {
-                foreach (var permission in permissions)
-                {
-                    var policyName = $"Permission.{module}.{permission}";
-                    options.AddPolicy(
-                        policyName,
-                        policy =>
-                            policy.Requirements.Add(new PermissionRequirement(module, permission))
-                    );
-                }
-            }
-        });
 
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
