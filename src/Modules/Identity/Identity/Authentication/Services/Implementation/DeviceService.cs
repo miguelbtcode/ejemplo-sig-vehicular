@@ -10,6 +10,28 @@ namespace Identity.Authentication.Services.Implementation;
 public class DeviceService(IdentityDbContext dbContext, IHttpContextAccessor httpContextAccessor)
     : IDeviceService
 {
+    public DeviceInfo DetectDevice(HttpContext context)
+    {
+        var userAgent = context.Request.Headers.UserAgent.ToString();
+        var isMobile = IsUserAgentMobile(userAgent);
+
+        if (isMobile)
+        {
+            return DeviceInfo.CreateMobile(
+                GenerateDeviceId(context),
+                ExtractMobileDeviceName(userAgent),
+                "mobile",
+                "1.0.0"
+            );
+        }
+
+        return DeviceInfo.CreateWeb(
+            GenerateWebDeviceId(context),
+            ExtractWebDeviceName(userAgent),
+            userAgent
+        );
+    }
+
     public DeviceInfo DetectDevice(HttpContext context, LoginRequestDto request)
     {
         var userAgent = context.Request.Headers.UserAgent.ToString();

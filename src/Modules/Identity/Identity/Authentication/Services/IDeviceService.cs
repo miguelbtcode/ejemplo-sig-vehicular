@@ -7,6 +7,7 @@ namespace Identity.Authentication.Services;
 
 public interface IDeviceService
 {
+    DeviceInfo DetectDevice(HttpContext context);
     DeviceInfo DetectDevice(HttpContext context, LoginRequestDto request);
     Task<RefreshToken> CreateSessionAsync(
         User user,
