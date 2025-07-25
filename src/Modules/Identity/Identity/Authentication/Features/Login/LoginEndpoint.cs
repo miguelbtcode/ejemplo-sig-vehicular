@@ -1,13 +1,17 @@
-namespace Identity.Users.Features.Login;
+using Identity.Authentication.Dtos;
 
-public record LoginRequest(LoginDto LoginData);
+namespace Identity.Authentication.Features.Login;
+
+public record LoginRequest(LoginRequestDto LoginData);
 
 public record LoginResponse(
-    string? Token,
-    DateTime? Expiry,
-    string? UserName,
-    List<string> Roles,
-    List<string> Permissions
+    string AccessToken,
+    string RefreshToken,
+    DateTime AccessTokenExpiry,
+    DateTime RefreshTokenExpiry,
+    UserDto User,
+    List<DeviceSessionDto> ActiveSessions,
+    string SessionType
 );
 
 public class LoginEndpoint : ICarterModule
@@ -20,7 +24,7 @@ public class LoginEndpoint : ICarterModule
                 {
                     var command = new LoginCommand(request.LoginData);
                     var result = await sender.SendAsync(command);
-                    var response = result.Value.AuthResult.Adapt<LoginResponse>();
+                    var response = result.Value.Response.Adapt<LoginResponse>();
 
                     return Results.Ok(response);
                 }

@@ -22,6 +22,9 @@ public static class IdentityModule
         IConfiguration configuration
     )
     {
+        // Add HttpAccessor
+        services.AddHttpContextAccessor();
+
         // Database
         var connectionString = configuration.GetConnectionString("Database");
 

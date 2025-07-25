@@ -25,7 +25,7 @@ public class ValidationDecorator : ISender
 
     public async Task SendAsync(ICommand command, CancellationToken cancellationToken = default)
     {
-        await ValidateAsync(command);
+        await ValidateAsync(command, cancellationToken);
         await _inner.SendAsync(command, cancellationToken);
     }
 
@@ -34,7 +34,7 @@ public class ValidationDecorator : ISender
         CancellationToken cancellationToken = default
     )
     {
-        await ValidateAsync(query);
+        await ValidateAsync(query, cancellationToken);
         return await _inner.SendAsync(query, cancellationToken);
     }
 

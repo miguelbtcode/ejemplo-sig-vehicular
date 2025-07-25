@@ -1,3 +1,4 @@
+using Identity.Authentication.Models;
 using Module = Identity.Modules.Models.Module;
 
 namespace Identity.Data;
@@ -10,6 +11,7 @@ public class IdentityDbContext(DbContextOptions<IdentityDbContext> options) : Db
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<PermissionType> PermissionTypes => Set<PermissionType>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
