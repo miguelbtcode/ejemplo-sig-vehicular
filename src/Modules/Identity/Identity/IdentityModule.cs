@@ -2,6 +2,7 @@ using System.Text;
 using Identity.Authentication.Configuration;
 using Identity.Authentication.Middleware;
 using Identity.Authentication.Services;
+using Identity.Authentication.Services.Background;
 using Identity.Authentication.Services.Implementation;
 using Identity.Authorization.Handlers;
 using Identity.Data.Seed;
@@ -38,6 +39,9 @@ public static class IdentityModule
 
         // JWT Configuration
         AddJwtAuthentication(services, configuration);
+
+        // Token Cleanup Background Service
+        AddTokenCleanupService(services);
 
         return services;
     }
@@ -136,6 +140,11 @@ public static class IdentityModule
                     },
                 };
             });
+    }
+
+    private static void AddTokenCleanupService(IServiceCollection services)
+    {
+        services.AddHostedService<TokenCleanupService>();
     }
 
     public static IApplicationBuilder UseIdentityModule(this IApplicationBuilder app)

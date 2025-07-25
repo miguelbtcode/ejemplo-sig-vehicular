@@ -24,7 +24,7 @@ internal class GetActiveSessionsHandler(IdentityDbContext dbContext)
                 rt.DeviceName,
                 rt.Platform,
                 rt.LastUsed,
-                false // Current session flag se establece externamente
+                false
             ))
             .ToListAsync(cancellationToken);
 
