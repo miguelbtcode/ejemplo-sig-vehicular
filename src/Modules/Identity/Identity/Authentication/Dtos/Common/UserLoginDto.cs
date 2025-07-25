@@ -1,4 +1,4 @@
-namespace Identity.Authentication.Dtos;
+namespace Identity.Authentication.Dtos.Common;
 
 public record UserLoginDto(
     Guid Id,

@@ -1,4 +1,4 @@
-namespace Identity.Authentication.Services;
+namespace Identity.Authentication.Services.Implementation;
 
 public class PasswordHasher : IPasswordHasher
 {

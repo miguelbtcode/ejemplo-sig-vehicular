@@ -1,4 +1,5 @@
-using Identity.Authentication.Dtos;
+using Identity.Authentication.Dtos.Common;
+using Identity.Authentication.Dtos.Requests;
 
 namespace Identity.Authentication.Features.Login;
 
@@ -9,7 +10,7 @@ public record LoginResponse(
     string RefreshToken,
     DateTime AccessTokenExpiry,
     DateTime RefreshTokenExpiry,
-    UserDto User,
+    UserLoginDto User,
     List<DeviceSessionDto> ActiveSessions,
     string SessionType
 );
@@ -19,7 +20,7 @@ public class LoginEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost(
-                "/identity/login",
+                "/identity/auth/login",
                 async (LoginRequest request, ISender sender) =>
                 {
                     var command = new LoginCommand(request.LoginData);
@@ -33,7 +34,8 @@ public class LoginEndpoint : ICarterModule
             .WithName("Login")
             .Produces<LoginResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
             .WithSummary("User Login")
-            .WithDescription("Authenticate user and return JWT token");
+            .WithDescription("Authenticate user and return JWT tokens");
     }
 }

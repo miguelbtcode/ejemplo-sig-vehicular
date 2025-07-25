@@ -1,4 +1,4 @@
-namespace Identity.Authentication.Dtos;
+namespace Identity.Authentication.Dtos.Requests;
 
 public record LoginRequestDto(
     string Email,

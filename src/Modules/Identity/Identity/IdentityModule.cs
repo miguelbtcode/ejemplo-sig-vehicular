@@ -1,6 +1,8 @@
 using System.Text;
+using Identity.Authentication.Configuration;
 using Identity.Authentication.Middleware;
 using Identity.Authentication.Services;
+using Identity.Authentication.Services.Implementation;
 using Identity.Authorization.Handlers;
 using Identity.Data.Seed;
 using Identity.Permissions.Services;
@@ -26,6 +28,22 @@ public static class IdentityModule
         services.AddHttpContextAccessor();
 
         // Database
+        AddDatabase(services, configuration);
+
+        // Authentication Services
+        AddAuthenticationServices(services, configuration);
+
+        // Authorization Services
+        AddAuthorizationServices(services);
+
+        // JWT Configuration
+        AddJwtAuthentication(services, configuration);
+
+        return services;
+    }
+
+    private static void AddDatabase(IServiceCollection services, IConfiguration configuration)
+    {
         var connectionString = configuration.GetConnectionString("Database");
 
         services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
@@ -48,13 +66,41 @@ public static class IdentityModule
             }
         );
 
-        // Services
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IJwtTokenService, JwtTokenService>();
-        services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IDataSeeder, IdentityDataSeeder>();
+    }
 
-        // JWT Authentication
+    private static void AddAuthenticationServices(
+        IServiceCollection services,
+        IConfiguration configuration
+    )
+    {
+        // Jwt settings
+        services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
+
+        // Core authentication services
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IDeviceService, DeviceService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+        // Permission services
+        services.AddScoped<IPermissionService, PermissionService>();
+    }
+
+    private static void AddAuthorizationServices(IServiceCollection services)
+    {
+        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+        services
+            .AddAuthorizationBuilder()
+            .AddPolicy("AdminOnly", policy => policy.RequireRole("Administrador"));
+    }
+
+    private static void AddJwtAuthentication(
+        IServiceCollection services,
+        IConfiguration configuration
+    )
+    {
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -72,15 +118,24 @@ public static class IdentityModule
                     ),
                     ClockSkew = TimeSpan.Zero,
                 };
+
+                // Handle token from query string for SignalR
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    },
+                };
             });
-
-        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
-
-        services
-            .AddAuthorizationBuilder()
-            .AddPolicy("AdminOnly", policy => policy.RequireRole("Administrador"));
-
-        return services;
     }
 
     public static IApplicationBuilder UseIdentityModule(this IApplicationBuilder app)

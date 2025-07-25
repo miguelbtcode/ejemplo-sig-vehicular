@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace Identity.Authentication.Models;
 
 public class RefreshToken : Entity<Guid>
@@ -6,10 +8,10 @@ public class RefreshToken : Entity<Guid>
     public Guid UserId { get; private set; }
     public string DeviceId { get; private set; } = default!;
     public string DeviceName { get; private set; } = default!;
-    public string Platform { get; private set; } = default!; // "iOS"|"Android"|"web"
+    public string Platform { get; private set; } = default!;
     public string? AppVersion { get; private set; }
-    public string? UserAgent { get; private set; } // Para web
-    public string? IpAddress { get; private set; } // Para web
+    public string? UserAgent { get; private set; }
+    public string? IpAddress { get; private set; }
     public DateTime LastUsed { get; private set; }
     public DateTime ExpiresAt { get; private set; }
     public bool IsRevoked { get; private set; }
@@ -20,20 +22,20 @@ public class RefreshToken : Entity<Guid>
 
     private RefreshToken() { } // EF Constructor
 
-    // Factory method para Mobile
     public static RefreshToken CreateMobile(
         Guid userId,
         string deviceId,
         string deviceName,
         string platform,
         string appVersion,
-        DateTime expiresAt
+        DateTime expiresAt,
+        string? token = null
     )
     {
         return new RefreshToken
         {
             Id = Guid.NewGuid(),
-            Token = GenerateSecureToken(),
+            Token = token ?? GenerateSecureToken(),
             UserId = userId,
             DeviceId = deviceId,
             DeviceName = deviceName,
@@ -45,20 +47,20 @@ public class RefreshToken : Entity<Guid>
         };
     }
 
-    // Factory method para Web
     public static RefreshToken CreateWeb(
         Guid userId,
         string deviceId,
         string deviceName,
         string userAgent,
         string? ipAddress,
-        DateTime expiresAt
+        DateTime expiresAt,
+        string? token = null
     )
     {
         return new RefreshToken
         {
             Id = Guid.NewGuid(),
-            Token = GenerateSecureToken(),
+            Token = token ?? GenerateSecureToken(),
             UserId = userId,
             DeviceId = deviceId,
             DeviceName = deviceName,
@@ -71,10 +73,7 @@ public class RefreshToken : Entity<Guid>
         };
     }
 
-    public void UpdateLastUsed()
-    {
-        LastUsed = DateTime.UtcNow;
-    }
+    public void UpdateLastUsed() => LastUsed = DateTime.UtcNow;
 
     public void Revoke(string reason = "User logout")
     {
@@ -89,7 +88,7 @@ public class RefreshToken : Entity<Guid>
     private static string GenerateSecureToken()
     {
         var randomBytes = new byte[64];
-        using var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
+        using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomBytes);
         return Convert.ToBase64String(randomBytes);
     }
