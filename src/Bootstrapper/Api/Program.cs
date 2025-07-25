@@ -1,8 +1,6 @@
 using Api.Middlewares;
 using Carter;
-using FluentValidation;
 using Identity;
-using Identity.Users.Features.CreateUser;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Shared.Extensions;
@@ -18,9 +16,6 @@ var identityAssembly = typeof(IdentityModule).Assembly;
 builder.Services.AddCarterWithAssemblies(identityAssembly);
 builder.Services.AddCQRS(identityAssembly);
 builder.Services.AddDDD(identityAssembly);
-
-builder.Services.AddScoped<IValidator<CreateUserCommand>, CreateUserCommandValidator>();
-
 builder.Services.AddValidationWithAssemblies(identityAssembly);
 
 // Autorización
