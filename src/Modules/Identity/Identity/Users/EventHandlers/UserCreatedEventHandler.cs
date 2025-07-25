@@ -1,6 +1,3 @@
-using Microsoft.Extensions.Logging;
-using Shared.Contracts.DDD;
-
 namespace Identity.Users.EventHandlers;
 
 public class UserCreatedEventHandler(ILogger<UserCreatedEventHandler> logger)

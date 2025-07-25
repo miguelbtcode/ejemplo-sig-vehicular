@@ -121,6 +121,12 @@ namespace Identity.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id_tipo_permiso");
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("categoria");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(20)

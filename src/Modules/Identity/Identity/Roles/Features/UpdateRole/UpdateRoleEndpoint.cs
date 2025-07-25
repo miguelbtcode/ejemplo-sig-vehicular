@@ -1,4 +1,3 @@
-using Identity.Authorization.Extensions;
 using Identity.Roles.Dtos;
 
 namespace Identity.Roles.Features.UpdateRole;

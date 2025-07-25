@@ -1,5 +1,3 @@
-using Identity.Users.Dtos;
-
 namespace Identity.Users.Features.Login;
 
 public record LoginRequest(LoginDto LoginData);

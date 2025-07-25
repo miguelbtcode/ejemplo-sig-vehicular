@@ -1,6 +1,5 @@
 using Identity.Authentication.Models;
 using Identity.Authentication.Services;
-using Identity.Users.Dtos;
 
 namespace Identity.Users.Features.Login;
 

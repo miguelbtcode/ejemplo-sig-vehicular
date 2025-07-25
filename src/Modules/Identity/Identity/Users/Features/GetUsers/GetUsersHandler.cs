@@ -1,4 +1,3 @@
-using Identity.Users.Dtos;
 using Shared.Pagination;
 
 namespace Identity.Users.Features.GetUsers;

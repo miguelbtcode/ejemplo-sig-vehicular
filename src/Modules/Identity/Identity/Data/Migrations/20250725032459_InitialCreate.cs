@@ -104,6 +104,11 @@ namespace Identity.Data.Migrations
                         maxLength: 20,
                         nullable: false
                     ),
+                    categoria = table.Column<string>(
+                        type: "character varying(20)",
+                        maxLength: 20,
+                        nullable: false
+                    ),
                     descripcion = table.Column<string>(
                         type: "character varying(255)",
                         maxLength: 255,

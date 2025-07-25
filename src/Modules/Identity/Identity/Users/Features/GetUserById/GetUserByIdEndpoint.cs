@@ -1,5 +1,3 @@
-using Identity.Users.Dtos;
-
 namespace Identity.Users.Features.GetUserById;
 
 public record GetUserByIdResponse(UserDto UserDto);
@@ -18,10 +16,12 @@ public class GetUserByIdEndpoint : ICarterModule
                     return Results.Ok(response);
                 }
             )
+            .WithTags("Users")
             .WithName("GetUserById")
             .Produces<GetUserByIdResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithSummary("Get User By Id")
-            .WithDescription("Get user details by ID");
+            .WithDescription("Get user details by ID")
+            .RequireAdmin();
     }
 }

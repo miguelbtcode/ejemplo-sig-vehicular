@@ -1,6 +1,3 @@
-using Microsoft.Extensions.Logging;
-using Shared.Contracts.DDD;
-
 namespace Identity.Users.EventHandlers;
 
 public class UserUpdatedEventHandler(
@@ -49,16 +46,16 @@ public class UserUpdatedEventHandler(
         CancellationToken cancellationToken
     )
     {
-        // Simple y efectivo - Replace All con EF
+        // 1. Get existing user roles
         var existingUserRoles = await dbContext
             .UserRoles.Where(ur => ur.IdUser == userId)
             .ToListAsync(cancellationToken);
 
-        // Eliminar todos los existentes
+        // 2. Remove roles
         dbContext.UserRoles.RemoveRange(existingUserRoles);
 
-        // Agregar todos los nuevos
-        if (newRoleIds.Any())
+        // 3. Add new roles
+        if (newRoleIds.Count != 0)
         {
             var newUserRoles = newRoleIds
                 .Select(roleId => UserRole.Create(userId, roleId))

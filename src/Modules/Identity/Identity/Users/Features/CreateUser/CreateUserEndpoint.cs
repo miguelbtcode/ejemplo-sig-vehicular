@@ -1,6 +1,3 @@
-using Identity.Authorization.Extensions;
-using Identity.Users.Dtos;
-
 namespace Identity.Users.Features.CreateUser;
 
 public record CreateUserRequest(CreateUserDto User);

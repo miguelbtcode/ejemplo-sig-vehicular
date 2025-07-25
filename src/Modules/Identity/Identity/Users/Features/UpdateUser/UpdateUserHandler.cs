@@ -1,4 +1,3 @@
-using Identity.Users.Dtos;
 using Shared.Exceptions;
 
 namespace Identity.Users.Features.UpdateUser;
@@ -59,32 +58,12 @@ internal class UpdateUserHandler(IdentityDbContext dbContext)
                 command.UserDto.RoleIds
             );
 
-            //TODO: Migrate this to domain event
-            // Actualizar roles
-            // var currentRoleIds = user.UserRoles.Select(ur => ur.IdRole).ToList();
-            // var newRoleIds = command.UserDto.RoleIds;
-
-            // // Eliminar roles que ya no están
-            // var rolesToRemove = currentRoleIds.Except(newRoleIds);
-            // foreach (var roleId in rolesToRemove)
-            // {
-            //     user.RemoveRole(roleId);
-            // }
-
-            // // Agregar nuevos roles
-            // var rolesToAdd = newRoleIds.Except(currentRoleIds);
-            // foreach (var roleId in rolesToAdd)
-            // {
-            //     user.AssignRole(roleId);
-            // }
-
             // SaveChanges maneja automáticamente las transacciones
             await dbContext.SaveChangesAsync(cancellationToken);
             return new UpdateUserResult(true);
         }
         catch (DbUpdateConcurrencyException)
         {
-            // Manejar específicamente errores de concurrencia
             throw new BusinessException(
                 "User.ConcurrencyError",
                 "El usuario fue modificado por otro proceso"

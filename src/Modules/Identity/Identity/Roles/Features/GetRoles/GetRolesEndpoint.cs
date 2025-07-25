@@ -1,5 +1,3 @@
-using Identity.Authorization.Extensions;
-
 namespace Identity.Roles.Features.GetRoles;
 
 public record GetRolesResponse(RoleStatistics Statistics, List<RoleDetailDto> Roles);

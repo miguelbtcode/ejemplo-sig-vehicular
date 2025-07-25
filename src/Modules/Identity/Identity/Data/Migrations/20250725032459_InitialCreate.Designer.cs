@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Identity.Data.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20250724223620_InitialCreate")]
+    [Migration("20250725032459_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -123,6 +123,12 @@ namespace Identity.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id_tipo_permiso");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("categoria");
 
                     b.Property<string>("Code")
                         .IsRequired()

@@ -1,5 +1,3 @@
-using Identity.Users.Dtos;
-
 namespace Identity.Users.Features.UpdateUser;
 
 public record UpdateUserRequest(UpdateUserDto Usuario);
@@ -21,11 +19,13 @@ public class UpdateUserEndpoint : ICarterModule
                     return Results.Ok(response);
                 }
             )
+            .WithTags("Users")
             .WithName("UpdateUser")
             .Produces<UpdateUserResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithSummary("Update User")
-            .WithDescription("Update user information");
+            .WithDescription("Update user information")
+            .RequireAdmin();
     }
 }

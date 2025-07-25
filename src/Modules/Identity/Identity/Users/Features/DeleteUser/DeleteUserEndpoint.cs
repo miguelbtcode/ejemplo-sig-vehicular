@@ -17,10 +17,12 @@ public class DeleteUserEndpoint : ICarterModule
                     return Results.Ok(response);
                 }
             )
+            .WithTags("Users")
             .WithName("DeleteUser")
             .Produces<DeleteUserResponse>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithSummary("Delete User")
-            .WithDescription("Deactivate user (soft delete)");
+            .WithDescription("Deactivate user (soft delete)")
+            .RequireAdmin();
     }
 }
