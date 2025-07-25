@@ -11,8 +11,7 @@ public record LoginResponse(
     DateTime AccessTokenExpiry,
     DateTime RefreshTokenExpiry,
     UserLoginDto User,
-    List<DeviceSessionDto> ActiveSessions,
-    string SessionType
+    List<DeviceSessionDto> ActiveSessions
 );
 
 public class LoginEndpoint : ICarterModule
