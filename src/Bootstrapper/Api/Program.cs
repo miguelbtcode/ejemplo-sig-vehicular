@@ -1,8 +1,8 @@
-using Api.Middlewares;
 using Carter;
 using Identity;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Shared.Exceptions.Handler;
 using Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +22,8 @@ builder.Services.AddValidationWithAssemblies(identityAssembly);
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityModule(builder.Configuration);
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -94,7 +96,7 @@ app.MapCarter();
 
 app.UseSerilogRequestLogging();
 
-app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseExceptionHandler(options => { });
 
 app.UseIdentityModule();
 
